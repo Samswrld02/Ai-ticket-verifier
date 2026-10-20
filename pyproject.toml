@@ -1,0 +1,20 @@
+[project]
+name = "ai-ticket-verifier"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Sam Al Jaboury", email = "saljaboury1@st.noorderpoort.nl" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "dotenv>=0.9.9",
+    "openai>=3.35.1",
+]
+
+[project.scripts]
+ai-ticket-verifier = "ai_ticket_verifier:main"
+
+[build-system]
+requires = ["uv_build>=0.12.19,<0.13.0"]
+build-backend = "uv_build"
