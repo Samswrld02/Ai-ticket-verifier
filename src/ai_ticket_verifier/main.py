@@ -1,30 +1,15 @@
 import asyncio
-from openai import OpenAI
-import dotenv
-from ai_client import aiclient, Response
+from dotenv import load_dotenv
+from ai_client import NewAiClient
+from config import Config
+from redis_connection import newRedis
+from ai_ticket_verifier import ticket_Verifier
+load_dotenv()
 
-async def startWorker():
-    try:
-        response = aiclient.beta.chat.completions.parse(
-    model="gemini-3.5-flash-lite",
-    messages=[
-        {   "role": "system",
-            "content": "You are a helpful assistant."
-        },
-        {
-            "role": "user",
-            "content": "whats my name what date is it lol"
-        }
-    ],
-    response_format=Response,
-    reasoning_effort="low",
-)
-        print(response.choices[0].message.parsed)
 
-    except Exception as e:
-        print(e)
+config = Config()
+ticket_verifier = ticket_Verifier(ai_client=NewAiClient(config), redis_c=newRedis(host=config.redis_host, port=config.redis_port, queue=config.queue), worker_count=5)
 
     
-
 if __name__ == "__main__":
-    asyncio.run(startWorker()) 
+    asyncio.run(ticket_verifier.start()) 

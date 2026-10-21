@@ -1,2 +1,1 @@
-def main() -> None:
-    print("Hello from ai-ticket-verifier!")
+from ai_ticket_verifier.ticket_verifier import ticket_Verifier
