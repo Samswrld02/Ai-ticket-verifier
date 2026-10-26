@@ -2,12 +2,15 @@ from threading import Thread
 import threading
 from ai_client import AiClient
 from redis_connection import redisC
+from redis.exceptions import ConnectionError
 import signal, sys
+from logging import Logger
 
 class ticket_Verifier():
-    def __init__(self, ai_client: AiClient, redis_c: redisC, worker_count) -> None:
+    def __init__(self, ai_client: AiClient, redis_c: redisC, worker_count, logger: Logger) -> None:
         self.ai_client = ai_client
         self.redis_c = redis_c
+        self.logger = logger
         self.worker_count = worker_count
         self._stop = threading.Event()
         self.threads: list[Thread] = []
@@ -17,7 +20,7 @@ class ticket_Verifier():
         signal.signal(signal.SIGTERM, self.on_signal) # kill
 
         #handle queue logic
-        print('ticket verifier started')
+        self.logger.info("ticket verifier started")
 
         # one reader
         reader = Thread(target=self.reader, args=(self._stop,), daemon=True)
@@ -40,15 +43,20 @@ class ticket_Verifier():
                 if result == "STOP":
                     break
 
-                # process result 
+                # process result note: will be changed to business logic later -> sent back to redis queue
                 print(self.ai_client.makeRequest(prompt=result))
+            except Exception as e:
+                self.logger.error(e)
             finally:
                 self.redis_c.internalQueue.task_done()
 
     # reader method
     def reader(self, event: threading.Event):
-        while not event.is_set():
-            self.redis_c.read_into_Queue()
+        # while not event.is_set():
+            try: 
+                self.redis_c.read_into_Queue(event=event)
+            except Exception as e:
+                self.logger.error(e)
 
     # handles exit logic 
     def on_signal(self, signum, frame):
