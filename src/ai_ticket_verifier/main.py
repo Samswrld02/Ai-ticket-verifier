@@ -8,8 +8,8 @@ load_dotenv()
 
 
 config = Config()
-ticket_verifier = ticket_Verifier(ai_client=NewAiClient(config), redis_c=newRedis(host=config.redis_host, port=config.redis_port, queue=config.queue), worker_count=5)
+ticket_verifier = ticket_Verifier(ai_client=NewAiClient(config), redis_c=newRedis(host=config.redis_host, port=config.redis_port, queue=config.queue), worker_count=config.workers)
 
     
 if __name__ == "__main__":
-    asyncio.run(ticket_verifier.start()) 
+    ticket_verifier.start()

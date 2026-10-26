@@ -1,4 +1,4 @@
-from openai import AsyncOpenAI
+from openai import OpenAI
 import os 
 from config import Config
 from ai_client import Response
@@ -9,16 +9,14 @@ class AiClient:
         self.api_key = config.api_key
         self.base_url = config.base_url
         try:
-            self.client = AsyncOpenAI(api_key=self.api_key, base_url=self.base_url)
+            self.client = OpenAI(api_key=self.api_key, base_url=self.base_url)
         except Exception as e:
             print(e)
             
-
-
-    async def makeRequest(self, prompt: str):
+    def makeRequest(self, prompt: str) -> str|None:
         try:
             print("Start ai ")
-            reply = await self.client.beta.chat.completions.parse(
+            reply = self.client.beta.chat.completions.parse(
                model="gemini-3.5-flash-lite",
                    messages=[
                        {   "role": "system",
