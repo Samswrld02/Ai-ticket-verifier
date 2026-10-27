@@ -5,6 +5,7 @@ from redis_connection import redisC
 from redis.exceptions import ConnectionError
 import signal, sys
 from logging import Logger
+from model import Ticket, ValidationError
 
 class ticket_Verifier():
     def __init__(self, ai_client: AiClient, redis_c: redisC, worker_count, logger: Logger) -> None:
@@ -40,6 +41,12 @@ class ticket_Verifier():
         while True:
             try:
                 result  = self.redis_c.internalQueue.get(block=True)
+
+                # validate data itself
+                ticket = self.validate_data(result)
+                if not ticket:
+                    break
+
                 if result == "STOP":
                     break
 
@@ -70,6 +77,15 @@ class ticket_Verifier():
         except Exception as e:
             print(e)
         sys.exit(0)
+
+    # method for validating incoming data
+    def validate_data(self, json_data: bytes|str) -> Ticket|bool:
+        try:
+            return Ticket.model_validate_json(json_data)
+        except ValidationError as e:
+            self.logger.error(e)
+            return False
+
         
 
 

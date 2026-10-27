@@ -20,7 +20,7 @@ class AiClient:
                model="gemini-3.5-flash-lite",
                    messages=[
                        {   "role": "system",
-                           "content": "You are a helpful assistant. that verifies if email content is valid. it must have a url normal question/support question and personal info answer if valid or not"
+                           "content": "You are a helpful assistant. that verifies if email content is valid. you validate the entire json string. The json is the representation of the email. must have a url normal question/support question and personal info answer if valid or not"
                        },
                        {
                            "role": "user",

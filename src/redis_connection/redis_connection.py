@@ -8,12 +8,14 @@ from threading import Event
 from logger import log
 from logging import Logger
 from queue import Queue, Full
+from model import Ticket, ValidationError
+
 
 retry = Retry(ExponentialBackoff(), 8)
 
 #variables gotton from config class
 def newRedis(host, port, queue, logger: Logger) -> redisC :
-    r = redis.Redis(host='localhost', port=6379, decode_responses=True, socket_keepalive=True, retry_on_error=[ConnectionError, TimeoutError], retry=retry)
+    r = redis.Redis(host='localhost', port=6379, db=3,decode_responses=True, socket_keepalive=True, retry_on_error=[ConnectionError, TimeoutError], retry=retry)
 
     return redisC(redis=r, queue=queue, logger=logger)
 
@@ -22,7 +24,7 @@ class redisC():
     def __init__(self, redis: Redis, queue, logger: Logger) -> None:
         self.r = redis
         self.queue = queue
-        self.internalQueue = Queue(150)
+        self.internalQueue = Queue[str](150)
         self.logger = logger 
     
     def read_into_Queue(self, event: Event):
@@ -46,6 +48,8 @@ class redisC():
                 except ConnectionError as e:
                     self.logger.error(e)
                     time.sleep(1)
+
+        
                     
                     
                         
