@@ -13,9 +13,9 @@ from model import Ticket, ValidationError
 
 retry = Retry(ExponentialBackoff(), 8)
 
-#variables gotton from config class
-def newRedis(host, port, queue, logger: Logger) -> redisC :
-    r = redis.Redis(host='localhost', port=6379, db=3,decode_responses=True, socket_keepalive=True, retry_on_error=[ConnectionError, TimeoutError], retry=retry)
+# variables gotton from config class
+def newRedis(host, port, queue, logger: Logger, db) -> redisC :
+    r = redis.Redis(host=host, port=port, db=db ,decode_responses=True, socket_keepalive=True, retry_on_error=[ConnectionError, TimeoutError], retry=retry)
 
     return redisC(redis=r, queue=queue, logger=logger)
 

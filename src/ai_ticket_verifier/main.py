@@ -7,10 +7,12 @@ from ai_ticket_verifier import ticket_Verifier
 from logger import log
 load_dotenv()
 
-
-config = Config()
-ticket_verifier = ticket_Verifier(ai_client=NewAiClient(config), redis_c=newRedis(host=config.redis_host, port=config.redis_port, queue=config.queue, logger=log), logger=log, worker_count=config.workers)
+# main entry point
+def main():
+    config = Config()
+    ticket_verifier = ticket_Verifier(ai_client=NewAiClient(config), redis_c=newRedis(host=config.redis_host, port=config.redis_port, queue=config.queue, logger=log, db=config.redis_db), logger=log, worker_count=config.workers)
+    ticket_verifier.start()
 
     
 if __name__ == "__main__":
-    ticket_verifier.start()
+    main()
