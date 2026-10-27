@@ -2,7 +2,6 @@ from threading import Thread
 import threading
 from ai_client import AiClient
 from redis_connection import redisC
-from redis.exceptions import ConnectionError
 import signal, sys
 from logging import Logger
 from model import Ticket, ValidationError
@@ -20,7 +19,7 @@ class ticket_Verifier():
         signal.signal(signal.SIGINT, self.on_signal)   # Ctrl+C
         signal.signal(signal.SIGTERM, self.on_signal) # kill
 
-        #handle queue logic
+        # handle queue logic
         self.logger.info("ticket verifier started")
 
         # one reader
@@ -42,13 +41,15 @@ class ticket_Verifier():
             try:
                 result  = self.redis_c.internalQueue.get(block=True)
 
-                # validate data itself
-                ticket = self.validate_data(result)
-                if not ticket:
-                    break
-
+                # signal worker to stop close
                 if result == "STOP":
                     break
+
+                # validate data itself, skip data if validation fails
+                ticket = self.validate_data(result)
+                if not ticket:
+                    self.logger.error("validation failed incorrect ticket")
+                    continue
 
                 # process result note: will be changed to business logic later -> sent back to redis queue
                 print(self.ai_client.makeRequest(prompt=result))
@@ -83,9 +84,10 @@ class ticket_Verifier():
         try:
             return Ticket.model_validate_json(json_data)
         except ValidationError as e:
-            self.logger.error(e)
             return False
 
-        
+    # method for sending structured response to redis
+    def handle_response(self) -> None:
+        pass
 
 
