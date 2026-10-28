@@ -1,1 +1,1 @@
-from redis_connection.redis_connection import newRedis, redisC
+from .redis_connection import newRedis, redisC

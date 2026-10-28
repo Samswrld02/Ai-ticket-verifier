@@ -1,1 +1,1 @@
-from ai_ticket_verifier.ticket_verifier import ticket_Verifier
+from .ticket_verifier import ticket_Verifier
