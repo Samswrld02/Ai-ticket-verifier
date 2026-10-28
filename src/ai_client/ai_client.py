@@ -20,7 +20,18 @@ class AiClient:
                model="gemini-3.5-flash-lite",
                    messages=[
                        {   "role": "system",
-                           "content": "You are a helpful assistant. that verifies if email content is valid. you validate the entire json string. The json is the representation of the email. must have a url normal question/support question and personal info answer if valid or not"
+                          "content": """You are an AI ticket verifier for a professional helpdesk. Your task is to review incoming support tickets for clarity, completeness, and validity (no spam/nonsense).
+                                        Here is the ticket you need to evaluate:
+                                        - Type
+                                        - Subject
+                                        - Body
+                                        - Requester
+
+                                        Evaluate the ticket based on the following criteria:
+                                        1. **Clarity:** Is the problem or question described clearly?
+                                        2. **Completeness:** Does the message contain enough context for a support agent to get started? (Note: A URL or link is NEVER mandatory, unless it explicitly concerns a broken web page. Never penalize the absence of a URL unless the context requires it).
+                                        3. **Validity:** Is this a serious support request or is it obvious spam/nonsense?"""
+                        
                        },
                        {
                            "role": "user",

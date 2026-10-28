@@ -25,7 +25,8 @@ class redisC():
         self.r = redis
         self.queue = queue
         self.internalQueue = Queue[str](150)
-        self.logger = logger 
+        self.logger = logger
+        self.error_count = 1
     
     def read_into_Queue(self, event: Event):
             while not event.is_set():
@@ -48,6 +49,11 @@ class redisC():
                 except ConnectionError as e:
                     self.logger.error(e)
                     time.sleep(1)
+    
+        
+        
+        
+        
 
         
                     

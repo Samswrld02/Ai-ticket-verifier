@@ -15,5 +15,3 @@ log.addHandler(file_handler)
 stream_handler.setFormatter(formatter)
 file_handler.setFormatter(formatter)
 
-log.error("hello world")
-log.info("nbruh")

@@ -1,1 +1,1 @@
-from model.model import Ticket, ValidationError
+from .model import Ticket, ValidationError

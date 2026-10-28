@@ -60,7 +60,6 @@ class ticket_Verifier():
 
     # reader method
     def reader(self, event: threading.Event):
-        # while not event.is_set():
             try: 
                 self.redis_c.read_into_Queue(event=event)
             except Exception as e:

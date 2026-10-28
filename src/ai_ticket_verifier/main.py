@@ -1,4 +1,3 @@
-import asyncio
 from dotenv import load_dotenv
 from ai_client import NewAiClient
 from config import Config
